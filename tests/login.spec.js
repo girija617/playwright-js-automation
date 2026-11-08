@@ -1,24 +1,24 @@
 import { test, expect } from "@playwright/test";
+import { LoginPage } from "../pages/LoginPage.js";
 
-test("login page displays the login button", async function ({ page }) {
-  await page.goto("https://www.saucedemo.com/");
+test("valid user can log in", async function ({ page }) {
+  const loginPage = new LoginPage(page);
 
-  const loginButton = page.getByRole("button", { name: "Login" });
+  await loginPage.open();
+  await loginPage.login("standard_user", "secret_sauce");
 
-  await expect(loginButton).toBeVisible();
+  await expect(page).toHaveURL(/inventory\.html$/);
 
-  //login with valid credentials
-  await page.getByPlaceholder("Username").fill("standard_user");
-  await page.getByPlaceholder("Password").fill("wrong_password");
-  await page.waitForTimeout(2000);
+  await expect(page.getByText("Products", { exact: true })).toBeVisible();
+});
 
-  await loginButton.click();
+test("valid invalid user cannot log in", async function ({ page }) {
+  const loginPage = new LoginPage(page);
 
-  //assert that the error message is displayed
-  const errorMessage = page.getByText(
+  await loginPage.open();
+  await loginPage.login("standard_user", "wrong_password");
+
+  await expect(page.getByRole("alert")).toHaveText(
     "Epic sadface: Username and password do not match any user in this service",
   );
-  await expect(errorMessage).toBeVisible();
-
-  await page.waitForTimeout(3000);
 });
