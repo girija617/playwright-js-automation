@@ -12,13 +12,15 @@ test("valid user can log in", async function ({ page }) {
   await expect(page.getByText("Products", { exact: true })).toBeVisible();
 });
 
-test("valid invalid user cannot log in", async function ({ page }) {
+test("user cannot log in with an incorrect password", async function ({
+  page,
+}) {
   const loginPage = new LoginPage(page);
 
   await loginPage.open();
   await loginPage.login("standard_user", "wrong_password");
 
-  await expect(page.getByRole("alert")).toHaveText(
+  await expect(loginPage.errorMessage).toHaveText(
     "Epic sadface: Username and password do not match any user in this service",
   );
 });
