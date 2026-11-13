@@ -52,7 +52,7 @@ test("user cannot log in with a blank password", async function ({ page }) {
   );
 });
 
-test.only("valid user can log in and add product to cart", async function ({
+test("valid user can log in and add product to cart", async function ({
   page,
 }) {
   const loginPage = new LoginPage(page);
